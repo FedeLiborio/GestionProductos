@@ -31,6 +31,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'maxproductos.apps.MaxproductosConfig',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -75,11 +76,11 @@ WSGI_APPLICATION = 'repartidor.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'ddjango.db.backends.mysql',
-        'NAME': 'maxproductos/dbMaxProductos.db',
-        'USER': 'mydatabaseuser',
-        'PASSWORD': 'mypassword',
-        'HOST': #'127.0.0.1', o '/var/run/mysql',
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'repartidordb',
+        'USER': 'root',
+        'PASSWORD': '445566',
+        'HOST': '127.0.0.1',#'localhost', #'127.0.0.1',  
         'PORT': '3306',
     }
 }
