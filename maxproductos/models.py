@@ -9,23 +9,24 @@ class Usuario(models.Model):
     nombreUsuario = models.CharField(max_length=50)
     contrasenia = models.CharField(max_length=50)
 
+class Proveedor(Usuario):
+    #horariosDeEntrega
+    descripcionNegocio = models.CharField(max_length=200)
+    calificacion = models.IntegerField
+
+    def __str__(self):
+        return self.nombre    
+
 class Horario(models.Model):
     horaInicio = models.IntegerField()
     horaFinal = models.IntegerField()
     dia = models.CharField(max_length=15)
-    proveedor= models.ForeignKey(proveedor, on_delete=models.CASCADE)
+    proveedor = models.ForeignKey(
+        Proveedor,
+        on_delete=models.CASCADE)
 
     def __str__(self):
         return self.horaInicio
-
-
-class Proveedor(Usuario):
-    #horariosDeEntrega
-    descripcionNegocio = models.CharField(max_length=200)
-    calificacion = models.IntegerField()
-
-    def __str__(self):
-        return self.nombre
 
 class MetodoDePago(models.Model):
     nombre = models.CharField(max_length=50)
