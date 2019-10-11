@@ -13,6 +13,7 @@ class Horario(models.Model):
     horaInicio = models.IntegerField()
     horaFinal = models.IntegerField()
     dia = models.CharField(max_length=15)
+    proveedor= models.ForeignKey(proveedor, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.horaInicio
@@ -21,7 +22,7 @@ class Horario(models.Model):
 class Proveedor(Usuario):
     #horariosDeEntrega
     descripcionNegocio = models.CharField(max_length=200)
-    calificacion = models.IntegerField
+    calificacion = models.IntegerField()
 
     def __str__(self):
         return self.nombre
@@ -32,13 +33,10 @@ class MetodoDePago(models.Model):
 
 class Carro(models.Model):
     #listaProductos
-    metodoDePago = models.ForeignKey(
-        MetodoDePago,
-        on_delete=models.CASCADE)
+    pass
 
 
 class Cliente(Usuario):
-    #buscar sobre uno a uno e implementar
     carro = models.ForeignKey(
         Carro,
         on_delete=models.CASCADE,)
