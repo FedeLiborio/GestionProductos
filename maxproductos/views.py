@@ -1,7 +1,5 @@
 from django.shortcuts import render
 
 
-#def function mostrar_Catalogo():
-
-	
-# Create your views here.
+def mostrar_catalogo(request):
+    return render(request, 'maxproductos/mostrarCatalogo.html')
