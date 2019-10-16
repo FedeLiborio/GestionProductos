@@ -14,12 +14,9 @@ class Producto(models.Model):
     proveedor = models.ForeignKey(
         Proveedor,
         on_delete = models.CASCADE)
-    carro = models.ForeignKey(
-        Carro,
-        on_delete=models.CASCADE)
     pedido = models.ForeignKey(
         Pedido, 
-        on_delete = models.CASCADE)
+        on_delete = models.CASCADE, null= True, blank= True)
 
     def __str__(self):
         return self.nombre
