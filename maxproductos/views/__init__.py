@@ -1,2 +1,2 @@
-from .Mostrar_index import *
-from .Inicio_sesion import *
+from .mostrar_catalogo import mostrar_catalogo
+from .iniciar_sesion import *
