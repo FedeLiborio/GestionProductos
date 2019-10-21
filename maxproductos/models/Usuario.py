@@ -8,3 +8,6 @@ class Usuario(models.Model):
     email = models.EmailField()
     nombreUsuario = models.CharField(max_length=50)
     contrasenia = models.CharField(max_length=50)
+
+    class Meta:
+        abstract = True

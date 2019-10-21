@@ -55,7 +55,7 @@ ROOT_URLCONF = 'repartidor.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': ['C:/Users/Fede/Desktop/UNIVERSIDAD FEDE/3er Anio/Laboratorio de Software/repartidor/maxproductos/templates/maxproductos'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
@@ -79,7 +79,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'repartidordb',
         'USER': 'root',
-        'PASSWORD': '445566',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',#'localhost', #'127.0.0.1',  
         'PORT': '3306',
     }
