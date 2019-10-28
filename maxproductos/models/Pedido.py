@@ -1,6 +1,7 @@
 from django.db import models
 from .Cliente import Cliente
 from .Proveedor import Proveedor
+from .MetodoPago import MetodoDePago
 
 class Pedido(models.Model):
     #tiene una lista de productos
@@ -18,3 +19,6 @@ class Pedido(models.Model):
         on_delete=models.CASCADE)
     direccion = models.CharField(max_length=100)
     entregado = models.BooleanField()
+    metodoDePago = models.ForeignKey(
+        MetodoDePago,
+        on_delete = models.CASCADE)

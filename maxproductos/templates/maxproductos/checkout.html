@@ -8,9 +8,47 @@
     <p>
         Elija la direccion de entrega
     </p>
+    <form action="" method="post">
+        <input type="radio" id="dirPropia" name="elegirDir" value="propia" onclick="deshabilitarOtraDir()" checked > Mi dirección registrada<br>
+        <input type="radio" id="dirOtra" name="elegirDir" value="otra" onclick="habilitarOtraDir()"> Elegir otra dirección:<br>
+        <input type="text" id="nuevadireccion"><br>
+    </form>
     <p>
-        Elija metodo de pago
+        Elija metodo de pago:
     </p>
+    <p>
+        <select>
+            {% for p in losPagos %}
+                <option value="{{p.nombre}}">{{p.nombre}}</option>
+            {% endfor %}
+        </select>     
+    </p>
+    <form action="/agregarProducto" method="get">
 
-    <button>Efectuar compra</button>
+        <button type="submit">Efectuar compra</button>
+
+    </form>
+    
+    {{elCarritoId}}
+    {{elCarrito}}
+
+
+
+
+    <p>UN FORM DE PRUEBA</p>
+    <form action="" method="post">
+        {{formito}}
+    </form>
+    <p>El color es: {{color}}</p>
+    <script>
+        document.getElementById("nuevadireccion").disabled = true;
+        function deshabilitarOtraDir(){
+            document.getElementById("nuevadireccion").disabled = true;
+        }
+
+        function habilitarOtraDir(){
+            document.getElementById("nuevadireccion").disabled = false;
+        }
+    
+    </script>
 {% endblock %}

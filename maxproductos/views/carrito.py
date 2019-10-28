@@ -1,9 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import render
-from maxproductos.models import Proveedor, Producto, Usuario, Carro
+from django.shortcuts import render, redirect
+from maxproductos.models import Proveedor, Producto, Usuario, Carro, MetodoDePago
+from maxproductos.forms import *
 
 #declaro algunos productos y proveedores
 carrito = []
+
+carritoId = []
 
 proveedor1 = Proveedor()
 proveedor1.nombre = "proveedor1"
@@ -33,13 +36,23 @@ carrito.append(producto3)
 ##finalizo declaracion
 
 
+
 def verCarrito(request):
     proveedores = []
     total = 0
-
     for p in carrito:
         if not(p.proveedor in proveedores):
             proveedores.append(p.proveedor)
         total = total + p.valor
+    request.session['fav_color'] = 'blue'
+    return render(request, "verCarrito.html", {"elCarrito": carrito, "losProveedores": proveedores, "total": total, "elCarritoId": carritoId})
 
-    return render(request, "verCarrito.html", {"elCarrito": carrito, "losProveedores": proveedores, "total": total})
+def verCheckout(request):
+    pagos = MetodoDePago.objects.all().values()
+    checkoutFormulario = CheckoutForm()
+    fav_color = request.session['fav_color']
+    return render(request, 'checkout.html', {'losPagos': pagos, "elCarrito": carrito, "elCarritoId": carritoId, "formito": checkoutFormulario, "color": fav_color })
+
+def agregarProducto(request):
+    carritoId.append(MetodoDePago.objects.filter(nombre = "Efectivo"))
+    return redirect('checkout.html')

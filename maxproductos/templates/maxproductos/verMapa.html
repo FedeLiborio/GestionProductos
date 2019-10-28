@@ -1,26 +1,53 @@
 <html>
-    <head>
-        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.5.1/dist/leaflet.css"
-        integrity="sha512-xwE/Az9zrjBIphAcBb3F6JVqxf46+CDLwfLMHloNu6KEQCAWi6HcDUbeOfBIptF7tcCzusKFjFw2yuvEpDL9wQ=="
-        crossorigin=""/>
+  <head>
+    <style>
+      #map {
+        width: 70vw;
+        height: 80vh;
+      }
+    </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+  </head>
 
-         <!-- Make sure you put this AFTER Leaflet's CSS -->
-        <script src="https://unpkg.com/leaflet@1.5.1/dist/leaflet.js" integrity="sha512-GffPMF3RvMeYyc1LWMHtK8EbPv0iNZ8/oTtHPx9/cc2ILxQ+u905qIwdpULaqDkyBKgOaB57QTMg7ztg8Jm2Og==" crossorigin=""></script>
-    </head>
-
-    <body>
-        <div id="mapid" style="width: 600px; height: 400px;"></div>
-
-
+  <body>
+    <div class="tab-pane container fade" id="menu1">
+      <!-- <r:script>
+                  <p>${lista[0].lat}</p>
+            </r:script>  -->
+      <div id="map">
         <script>
-        var mymap = L.map('mapid').setView([51.505, -0.09], 13);
+          function iniciarMapa() {
+            console.log(1)
+            var map = new google.maps.Map(document.getElementById("map"), {
+              zoom: 13,
+              center: { lat: -54.8, lng: -68.3 }
+            });
 
-        L.tileLayer('https://api.tiles.mapbox.com/v4/{id}/{z}/{x}/{y}.png?access_token={accessToken}', {
-            attribution: 'Map data &copy; <a href="https://www.openstreetmap.org/">OpenStreetMap</a> contributors, <a href="https://creativecommons.org/licenses/by-sa/2.0/">CC-BY-SA</a>, Imagery © <a href="https://www.mapbox.com/">Mapbox</a>',
-            maxZoom: 18,
-            id: 'mapbox.streets',
-            accessToken: 'pk.eyJ1IjoiMGRyYWtlbjAiLCJhIjoiY2sxeWg2Yjc2MG5jNTNkcW85YXp1d3dtdSJ9.QTbcwlnuzgRU71C2dWdxFQ'
-        }).addTo(mymap);
-    </script>
-    </body>
+            //Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+            $.getJSON(url, function(json) {
+                latitud = json.results[0].geometry.location.lat;
+                longitud = json.results[0].geometry.location.lng;
+                
+                punto = {lat: latitud, lng: longitud};
+                var marker = new google.maps.Marker({position: punto, map: map});
+              }
+            );
+            //var latitudJson = myjson.results.geometry.location.lat;
+
+            //var latitudJson = $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y");
+
+            console.log(myjson);
+            console.log(algo)
+          }
+        </script>
+      </div>
+    </div>
+
+    <script
+      async
+      defer
+      src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y&callback=iniciarMapa"
+    ></script>
+  </body>
 </html>

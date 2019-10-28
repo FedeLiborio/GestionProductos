@@ -5,4 +5,5 @@ urlpatterns = [
     path('verCarrito/', verCarrito),
     path('procederACheckout/', verCheckout),
      path('verMapa/', verMapa),
+     path('agregarProducto/', agregarProducto)
 ]
