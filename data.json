@@ -1,0 +1,16 @@
+[
+    {
+        "nombre": "Cocacola",
+        "tipo": "Bebida",
+        "descripcion": " bebida con gas",
+        "valor": 80,
+        "Proveedor\r": " Ricardo\r"
+    },
+    {
+        "nombre": "Agua",
+        "tipo": "Bebida",
+        "descripcion": " bebida sin gas",
+        "valor": 50,
+        "Proveedor\r": " Ricardo\r\n"
+    }
+]

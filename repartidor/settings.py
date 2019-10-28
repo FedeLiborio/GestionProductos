@@ -63,6 +63,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'maxproductos.processors.ctx_dict'
             ],
         },
     },
@@ -80,7 +81,7 @@ DATABASES = {
         'NAME': 'repartidordb',
         'USER': 'root',
         'PASSWORD': '445566',
-        'HOST': '127.0.0.1',#'localhost', #'127.0.0.1',  
+        'HOST': '127.0.0.1',#'localhost', 
         'PORT': '3306',
     }
 }

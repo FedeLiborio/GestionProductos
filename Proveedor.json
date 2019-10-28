@@ -1,0 +1,24 @@
+[
+    {
+        "Nombre": "Ricardo",
+        "Apellido": "Rocha",
+        "Direccion": "Provincia Grande 260",
+        "Telefono": 15417927,
+        "Email": "rocha_095@hotmail.com",
+        "NombreUsuario": "Leon1378",
+        "Contrasenia": 445566,
+        "DescripcionNegocio": "Venta de bebidas",
+        "Calificacion": 0
+    },
+    {
+        "Nombre": "Federico",
+        "Apellido": "Liborio",
+        "Direccion": " Gdor Paz 200",
+        "Telefono": 11223344,
+        "Email": "fede-l-@hotmail.com",
+        "NombreUsuario": "Draken",
+        "Contrasenia": 445566,
+        "DescripcionNegocio": "Venta de quimicos",
+        "Calificacion": 0
+    }
+]
