@@ -6,7 +6,6 @@ from maxproductos.forms import *
 #declaro algunos productos y proveedores
 carrito = []
 
-carritoId = []
 
 proveedor1 = Proveedor()
 proveedor1.nombre = "proveedor1"
@@ -38,20 +37,52 @@ carrito.append(producto3)
 
 
 def verCarrito(request):
+    #me aseguro que el carrito exista en la session, por las dudas
+    if 'carrito' not in request.session:
+        request.session['carrito'] = []
+    
+    carritoAux = request.session['carrito']
+    carritoAux.append(1)
+    #traigo todos los productos existentes
+    productosQuerySet = Producto.objects.all()
+
+    #inicializo las variables que voy a pasar al template
+    productosAgregados = []
     proveedores = []
     total = 0
-    for p in carrito:
-        if not(p.proveedor in proveedores):
-            proveedores.append(p.proveedor)
-        total = total + p.valor
-    request.session['fav_color'] = 'blue'
-    return render(request, "verCarrito.html", {"elCarrito": carrito, "losProveedores": proveedores, "total": total, "elCarritoId": carritoId})
+
+    #guardo los objetos Producto dentro de productosAgregados y extraigo los proveedores
+    for producto in productosQuerySet:
+        if producto.id in carritoAux:
+            productosAgregados.append(producto)
+            if not(Proveedor.objects.get(id=producto.proveedor) in proveedores):
+                proveedores.append(Proveedor.objects.get(id=producto.proveedor))
+            #total = total + producto.valor
+
+    return render(request, "verCarrito.html", {"elCarrito": productosAgregados, "losProveedores": proveedores, "total": total})
+
+
+
 
 def verCheckout(request):
     pagos = MetodoDePago.objects.all().values()
+
+
+    
+    rq = request.GET.get('id', False)
+    if rq != False:
+        rq = int(rq)
     checkoutFormulario = CheckoutForm()
-    fav_color = request.session['fav_color']
-    return render(request, 'checkout.html', {'losPagos': pagos, "elCarrito": carrito, "elCarritoId": carritoId, "formito": checkoutFormulario, "color": fav_color })
+    if 'lista' not in request.session:
+        request.session['lista'] = []
+   
+    listaAux = request.session['lista']
+    listaAux.append(0)
+    request.session['lista'] = listaAux
+    lista = request.session['lista']
+    metodo = request.method
+
+    return render(request, 'checkout.html', {'losPagos': pagos, "elCarrito": carrito, "elCarritoId": carritoId, "formito": checkoutFormulario, "listita": lista, 'metodo': metodo, 'rq': rq})
 
 def agregarProducto(request):
     carritoId.append(MetodoDePago.objects.filter(nombre = "Efectivo"))

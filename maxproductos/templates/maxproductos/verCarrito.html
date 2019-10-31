@@ -6,48 +6,57 @@
 
 {% block content %}
 
-    <ul class="nav nav-tabs" id="myTab" role="tablist">
-        {% for prov in losProveedores %}
-        <li class="nav-item">
-            <a class="nav-link" id="home-tab" data-toggle="tab" href="#{{prov.nombre}}" role="tab" aria-controls="home" aria-selected="true">{{prov.nombre}}</a>
-        </li>
+    {% comment %}
+        Si se entra al template para ver el carrito y esta vacio se deja un mensaje.
+        Si no esta vacio se carga la pantalla normal
+    {% endcomment %}
 
-        {% endfor %}
-    </ul>
+    {% if not elCarrito %}
+        <p>Tu carrito está vacio. Vamo a comprar</p>
+    
+    {% else %}
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+            {% for prov in losProveedores %}
+            <li class="nav-item">
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#{{prov.nombre}}" role="tab" aria-controls="home" aria-selected="true">{{prov.nombre}}</a>
+            </li>
+
+            {% endfor %}
+        </ul>
 
 
-  <div class="tab-content" id="myTabContent">
-        {% for prov in losProveedores %}
-        <div class="tab-pane fade" id={{prov.nombre}} role="tabpanel" aria-labelledby="home-tab">
-            <ul>
-                {% for producto in elCarrito %}
-                    {% if prov == producto.proveedor %}
-                    <li>{{producto.nombre}}  ${{producto.valor}}</li>
-                    {% endif %}
-                {% endfor %}
-            </ul>
-            
+        <div class="tab-content" id="myTabContent">
+            {% for prov in losProveedores %}
+            <div class="tab-pane fade" id={{prov.nombre}} role="tabpanel" aria-labelledby="home-tab">
+                <ul>
+                    {% for producto in elCarrito %}
+                        {% if prov == producto.proveedor %}
+                        <li>{{producto.nombre}}  ${{producto.valor}}</li>
+                        {% endif %}
+                    {% endfor %}
+                </ul>
+                
+            </div>
+            {% endfor %}
         </div>
-        {% endfor %}
-  </div>
+        
+        <p>Total: ${{total}}</p>
+
+
+        <p>Ingrese una fecha dentro del rango: </p>
+
+        <input type="date" id="start" name="trip-start"
+        value="2018-07-22"
+        min="2018-01-01" max="2018-12-31">
+
+        <p>Seleccione una hora dentro del siguiente rango:</p>
+
+        <input type="time" id="appt" name="appt"
+        min="09:00" max="18:00" required>
+
+        <p></p>
+        <button>Checkout</button>
     
-    <p>Total: ${{total}}</p>
+    {% endif %}
 
-
-    <p>Ingrese una fecha dentro del rango: </p>
-
-    <input type="date" id="start" name="trip-start"
-       value="2018-07-22"
-       min="2018-01-01" max="2018-12-31">
-
-    <p>Seleccione una hora dentro del siguiente rango:</p>
-
-    <input type="time" id="appt" name="appt"
-       min="09:00" max="18:00" required>
-
-    <p></p>
-    <button>Checkout</button>
-
-    {{elCarritoId}}
-    
 {% endblock %}
