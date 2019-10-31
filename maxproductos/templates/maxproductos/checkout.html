@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Checkout
+{% endblock %}
+
+{% block content %}
+    <p>
+        Elija la direccion de entrega
+    </p>
+    <form action="" method="post">
+        <input type="radio" id="dirPropia" name="elegirDir" value="propia" onclick="deshabilitarOtraDir()" checked > Mi dirección registrada<br>
+        <input type="radio" id="dirOtra" name="elegirDir" value="otra" onclick="habilitarOtraDir()"> Elegir otra dirección:<br>
+        <input type="text" id="nuevadireccion"><br>
+    </form>
+    <p>
+        Elija metodo de pago:
+    </p>
+    <p>
+        <select>
+            {% for p in losPagos %}
+                <option value="{{p.nombre}}">{{p.nombre}}</option>
+            {% endfor %}
+        </select>     
+    </p>
+    <form action="/agregarProducto" method="get">
+
+        <button type="submit">Efectuar compra</button>
+
+    </form>
+    
+    {{elCarritoId}}
+    {{elCarrito}}
+
+
+
+
+    <p>UN FORM DE PRUEBA</p>
+    <form action="" method="post">
+        {{formito}}
+    </form>
+    <p>El color es: {{listita}}</p>
+
+    <p>{{metodo}}</p>
+
+    <p>{{rq}}</p>
+
+    <form action="" method="GET">
+        <input type="hidden" name="id" value="42">
+        <input type="submit" value="Submit"/>
+    </form>
+    
+    <script>
+        document.getElementById("nuevadireccion").disabled = true;
+        function deshabilitarOtraDir(){
+            document.getElementById("nuevadireccion").disabled = true;
+        }
+
+        function habilitarOtraDir(){
+            document.getElementById("nuevadireccion").disabled = false;
+        }
+    
+    </script>
+{% endblock %}

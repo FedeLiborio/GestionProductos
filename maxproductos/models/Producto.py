@@ -1,11 +1,10 @@
 from django.db import models
 from .TipoProducto import TipoProducto
 from .Proveedor import Proveedor
-from .Carro import Carro
-from .Pedido import Pedido
 
 class Producto(models.Model):
     nombre = models.CharField(max_length=50)
+    marca = models.CharField(max_length=100)
     tipo = models.ForeignKey(
         TipoProducto,
         on_delete=models.CASCADE)
@@ -14,11 +13,9 @@ class Producto(models.Model):
     proveedor = models.ForeignKey(
         Proveedor,
         on_delete = models.CASCADE)
-    pedido = models.ForeignKey(
-        Pedido, 
-        on_delete = models.CASCADE, null= True, blank= True)
 
     creado= models.DateTimeField(auto_now_add=True)
+
 
     def __str__(self):
         return self.nombre

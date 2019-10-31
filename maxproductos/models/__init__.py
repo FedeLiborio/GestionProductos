@@ -1,5 +1,4 @@
 from .Administrador import Administrador
-from .Carro import Carro
 from .Cliente import Cliente
 from .Horario import Horario
 from .MetodoPago import MetodoDePago

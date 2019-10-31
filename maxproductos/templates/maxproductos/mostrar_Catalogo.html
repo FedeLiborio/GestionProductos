@@ -205,11 +205,15 @@
                 </svg>
                 <h2>{{it.nombre}}</h2>
                 <p>{{it.descripcion}}</p>
-                <p><a class="btn btn-primary" href="{% url 'detalle_Producto' it.id %}" role="button">Mas informacion &raquo;</a></p>
-                <p><a class="btn btn-secondary" href="#" role="button" onclick="agregarCarrito(it.id)">Agregar al carro &raquo;</a></p>
-                
-                    <!-- <input type="button" value="Click me" onclick="agregar_lista(1)"> -->
-            
+
+                <p><a class="btn btn-primary" href="{% url 'detalle_Producto' it.id %}" role="button">Mas informacion
+                        &raquo;</a></p>
+
+                <form action="{% url '/' %}" method="GET">
+                    {% csrf_token %}
+                    <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al carro</button>
+                </form>
+        
             </div><!-- /.col-lg-4 -->
             {% endfor %}
         </div><!-- /.row -->
@@ -227,16 +231,10 @@
 <a href="{% url 'iniciar_Sesion' %}">Iniciar Sesion</a>
 <!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
 <a href="{% url 'registrar_Usuario' %}">Registrar Usuario</a>
+<a href="{% url 'ver_Carrito' %}"> ver carrito</a>
 
 {{ test }}
 {{ user }}
 {{ request.session }}
 
-<!-- <script>
-        function agregarCarrito(idProducto){
-            carrito.push(idProducto)
-        }
-    
-    
-    </script> -->
 {% endblock %}
