@@ -1,7 +1,11 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 #from django.views.generic.base import TemplateView
-from maxproductos.models import Producto, Proveedor, Producto, Usuario, MetodoDePago
+from maxproductos.models import Producto, Proveedor, Producto, Usuario, MetodoDePago, Pedido, Horario, Cliente
 from .form import ProveedorForm
+from datetime import datetime
+import calendar
+from urllib.request import urlopen
+import json
 
 lista=[]
 
@@ -56,12 +60,15 @@ def detalle_producto_v(request, idProducto):
 ##################################################################################################
 
 def verCarrito(request):
+    diasDeLaSemana = {0: 'Lunes', 1: 'Martes', 2: 'Miercoles', 3: 'Jueves', 4: 'Viernes', 5: 'Sabado', 6: 'Domingo'}
+
     #me aseguro que el carrito exista en la session, por las dudas
     if 'carrito' not in request.session:
         request.session['carrito'] = []
     
     carritoAux = request.session['carrito']
     carritoAux.append(1)
+    carritoAux.append(2)
     #traigo todos los productos existentes
     productosQuerySet = Producto.objects.all()
 
@@ -69,35 +76,113 @@ def verCarrito(request):
     productosAgregados = []
     proveedores = []
     total = 0
+    horariosProveedor = Horario.objects.all()
 
     #guardo los objetos Producto dentro de productosAgregados y extraigo los proveedores
     for producto in productosQuerySet:
         if producto.id in carritoAux:
             productosAgregados.append(producto)
-            if not(Proveedor.objects.get(id=producto.proveedor) in proveedores):
-                proveedores.append(Proveedor.objects.get(id=producto.proveedor))
-            #total = total + producto.valor
+            if not(Proveedor.objects.get(id=producto.proveedor.id) in proveedores):
+                proveedores.append(Proveedor.objects.get(id=producto.proveedor.id))
+            total = total + producto.valor
 
-    return render(request, "maxproductos/verCarrito.html", {"elCarrito": productosAgregados, "losProveedores": proveedores, "total": total})
+    if (request.method == 'GET'):
+        if 'solicitudCheckout' in request.GET:
+            datosValidados = True
+            pedidosParaAlmacenar = []
+            for prov in proveedores:
+                fechaProvId = "fecha" + str(prov.id)
+                tiempoProvId = "tiempo" + str(prov.id)
+                
+                if fechaProvId in request.GET:
+                    dic= request.GET # devuelve un diccionario
+                    fecha = dic[fechaProvId]
+                    tiempo = dic[tiempoProvId]
+
+                    diaDeLaSemana = datetime.strptime(fecha, '%Y-%m-%d').date().weekday()
+                    diaDeLaSemana = diasDeLaSemana.get(diaDeLaSemana)
+
+                    hora = datetime.strptime(tiempo, '%H:%M').time()
+
+                    if diaDeLaSemana in Horario.objects.filter(proveedor = prov).values_list('dia', flat=True):
+                        for h in Horario.objects.filter(proveedor = prov, dia = diaDeLaSemana).values_list('horaInicio', flat=True):
+                            if(hora >= h):
+                                for h in Horario.objects.filter(proveedor = prov, dia = diaDeLaSemana).values_list('horaFinal', flat=True):
+                                    if(hora <= h):
+                                        #Si entra en este if, la fecha y hora esta validada
+                                        pedidosParaAlmacenar.append({
+                                            "proveedor": prov.id,
+                                            "cliente": 2,
+                                            "hora": tiempo,
+                                            "fecha": fecha
+
+                                        })
+                                        datosValidados = datosValidados and True
+                                    else:
+                                        datosValidados = datosValidados and False
+                            else:
+                                datosValidados = datosValidados and False
+                    else:  
+                        datosValidados = datosValidados and False
+            if datosValidados == True:
+                request.session['pedidosParaAlmacenar'] = pedidosParaAlmacenar 
+                return redirect('proceder_Checkout')
+            else:
+                print("Datos incorrectos. Vuelva a intentar")
+
+    return render(request, "maxproductos/verCarrito.html", {"elCarrito": productosAgregados, "losProveedores": proveedores, "total": total, "horarios": horariosProveedor})
 
 def verCheckout(request):
     pagos = MetodoDePago.objects.all().values()
 
-    rq = request.GET.get('id', False)
-    if rq != False:
-        rq = int(rq)
-    checkoutFormulario = CheckoutForm()
-    if 'lista' not in request.session:
-        request.session['lista'] = []
-   
-    listaAux = request.session['lista']
-    listaAux.append(0)
-    request.session['lista'] = listaAux
-    lista = request.session['lista']
-    metodo = request.method
+    if (request.method == 'GET'):
+        if 'solicitudRealizarPedido' in request.GET:
+            dic= request.GET # devuelve un diccionario
+            pedidosParaAlmacenar = request.session['pedidosParaAlmacenar']
+            for p in pedidosParaAlmacenar:
+                cliente = Cliente.objects.get(id= p['cliente'])
+                proveedor = Proveedor.objects.get(id= p['proveedor'])
+                if dic['elegirDir'] == 'propia':                  
+                    calleNombre = Cliente.objects.get(id= p['cliente']).calle
+                    calleNumero = Cliente.objects.get(id= p['cliente']).numero
+                    latitud = Cliente.objects.get(id= p['cliente']).latitud
+                    longitud = Cliente.objects.get(id= p['cliente']).longitud
+                else:
+                    calleNombre = dic['nuevaCalle'].replace(" ","+")
+                    calleNumero = dic['nuevaCalleNumero']
+                    #Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
+                    url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + calleNumero + "+" + calleNombre + "&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+                    json_url = urlopen(url)
+                    data = json.loads(json_url.read())
+                    latitud = data['results'][0]['geometry']['location']['lat']
+                    longitud = data['results'][0]['geometry']['location']['lng']
+                    
+                    calleNombre = dic['nuevaCalle'].replace("+"," ")
+                pedido = Pedido(confirmado=0,fecha= p['fecha'], hora= p['hora'], calle= calleNombre, numero=calleNumero, latitud= latitud, longitud = longitud, entregado= 0, cliente= cliente, proveedor= proveedor)
+                pedido.save()
+                
+                #Comienza a asociar los productos con el pedido
+                carritoAux = request.session['carrito']
 
-    return render(request, 'maxproductos/checkout.html', {'losPagos': pagos, "elCarrito": carrito, "elCarritoId": carritoId, "formito": checkoutFormulario, "listita": lista, 'metodo': metodo, 'rq': rq})
+                #traigo todos los productos existentes
+                productosQuerySet = Producto.objects.all()
+                productosAgregados = []
+
+                #guardo los objetos Producto dentro de productosAgregados
+                for producto in productosQuerySet:
+                    if producto.id in carritoAux:
+                        productosAgregados.append(producto)
+                for p in productosAgregados:
+                    pedido.productos.add(p)
+    return render(request, 'maxproductos/checkout.html', {'losPagos': pagos})
 
 def verMapa(request):
-    return render(request, 'maxproductos/verMapa.html')
+    coordenadas=[]
+    pedidosQuerySet = Pedido.objects.all()
+    for p in pedidosQuerySet:
+        latAux = str(p.latitud).replace(',','.')
+        lngAux = str(p.longitud).replace(',','.')
+        coordenadas.append({'latitud': latAux, 'longitud': lngAux})
+
+    return render(request, 'maxproductos/verMapa.html',{'coordenadas': coordenadas})
 

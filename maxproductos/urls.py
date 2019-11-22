@@ -7,7 +7,7 @@ urlpatterns = [
     path('registrarUsuario/', views.registrar_usuario_v, name='registrar_Usuario'),
     path('detalleProducto/<int:idProducto>/', views.detalle_producto_v, name='detalle_Producto'),
     path('verCarrito/', views.verCarrito, name='ver_Carrito'),
-    path('procederACheckout/', views.verCheckout),
+    path('procederACheckout/', views.verCheckout, name='proceder_Checkout'),
     path('verMapa/', views.verMapa),
 
     # parece ser que debe terminar el nombre(no name) de la url con / para que

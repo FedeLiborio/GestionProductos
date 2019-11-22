@@ -7,11 +7,11 @@
     height: 80vh;
   }
 </style>
-<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
 {% endblock %}
 
 {% block title %}
-MAPA
+Mapa
 {% endblock %}
 
 
@@ -23,18 +23,29 @@ MAPA
 <hr>
 <hr>
 
-<div class="tab-pane container fade" id="menu1">
-  <!-- <r:script>
-                  <p>${lista[0].lat}</p>
-            </r:script>  -->
+
   <div id="map">
-    <script>
+   
+  </div>
+
+
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y&callback=iniciarMapa"></script>
+ <script>
+    var data
       function iniciarMapa() {
         var map = new google.maps.Map(document.getElementById("map"), {
           zoom: 13,
           center: { lat: -54.8, lng: -68.3 }
         });
-
+        
+        /*
         //Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
         url = "https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
         $.getJSON(url, function (json) {
@@ -45,15 +56,14 @@ MAPA
           var marker = new google.maps.Marker({ position: punto, map: map });
         }
         );
-        //var latitudJson = myjson.results.geometry.location.lat;
-
-        //var latitudJson = $.getJSON("https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y");
-
+        */
+        
+        var punto;
+        var marker;
+        {% for c in coordenadas %}
+          punto = {lat: {{c.latitud}}, lng: {{c.longitud}}};
+          marker = new google.maps.Marker({ position: punto, map: map });
+        {% endfor %}
       }
     </script>
-  </div>
-</div>
-
-<script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y&callback=iniciarMapa"></script>
 {% endblock %}
