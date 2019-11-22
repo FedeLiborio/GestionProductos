@@ -19,4 +19,7 @@ from django.urls import path, include
 urlpatterns = [
 	path('', include('maxproductos.urls')),
     path('admin/', admin.site.urls),
+
+    path('cuenta/', include('django.contrib.auth.urls')),
+    path('registro/', include('registration.urls')),
 ]

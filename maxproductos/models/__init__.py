@@ -6,4 +6,3 @@ from .Pedido import Pedido
 from .Producto import Producto
 from .Proveedor import Proveedor
 from .TipoProducto import TipoProducto
-from .Usuario import Usuario

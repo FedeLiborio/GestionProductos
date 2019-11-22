@@ -185,6 +185,16 @@
         </a>
     </div>
 
+    <form action="{% url '/' %}" method="GET">
+        {% csrf_token %}
+        <select name="clasificacion">
+            <option value="1">Bebida</option>
+            <option value="2">Alimento</option>
+            <option value="3">Informatica</option>
+        </select>
+        <button type="submit" class="btn btn-success">Aplicar</button>
+    </form>
+
 
     <!-- Marketing messaging and featurettes
   ================================================== -->
@@ -205,15 +215,14 @@
                 </svg>
                 <h2>{{it.nombre}}</h2>
                 <p>{{it.descripcion}}</p>
-
+                <p>{{it.tipo}}</p>
                 <p><a class="btn btn-primary" href="{% url 'detalle_Producto' it.id %}" role="button">Mas informacion
                         &raquo;</a></p>
-
                 <form action="{% url '/' %}" method="GET">
                     {% csrf_token %}
-                    <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al carro</button>
+                    <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al
+                        carro</button>
                 </form>
-        
             </div><!-- /.col-lg-4 -->
             {% endfor %}
         </div><!-- /.row -->
@@ -228,13 +237,37 @@
 </main>
 
 <p>{{carrito}}</p>
-<a href="{% url 'iniciar_Sesion' %}">Iniciar Sesion</a>
-<!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
-<a href="{% url 'registrar_Usuario' %}">Registrar Usuario</a>
-<a href="{% url 'ver_Carrito' %}"> ver carrito</a>
 
+
+
+<!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
+<a href="{% url 'ver_Carrito' %}"> ver carrito</a> <br>
+<a href="{% url 'crear_Producto' %}"> CREAR PRODUCTO</a> <br>
+<a href="{% url 'modificar_Producto' %}"> MODIFICAR PRODUCTO</a> <br>
+<a href="{% url 'mostrar_Perfil_Proveedor' %}"> PERFIL PROVEEDOR</a> <br>
+<a href="{% url 'registrar_Proveedor' %}"> REGISTRAR PROVEEDOR</a> <br>
+<a href="{% url 'registrar_Cliente' %}"> REGISTRAR CLIENTE</a> <br>
+
+<a href="{% url 'admin:login' %}"> ADMINNN</a> <br>
+<a href="admin/"> ADMIN</a> <br>
+
+
+
+{% if request.user.is_authenticated %}
+    <a href="{% url 'logout' %}">Cerrar Sesion</a> <br>
+    <a href="{% url 'mostrar_Perfil_Proveedor' %}">Perfil</a> <br>
+{% else %}
+<a href="{% url 'login' %}">Iniciar Sesion</a> <br>
+{% endif %}
+
+<p>Usuario Actual: {{request.user}} </p>
+<p>ID: {{request.user.id}} </p>
+<p>Calle: {{request.user.proveedor.id}} </p>
+
+{% comment %}
 {{ test }}
 {{ user }}
 {{ request.session }}
+{% endcomment %}
 
 {% endblock %}

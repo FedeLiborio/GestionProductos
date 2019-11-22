@@ -1,7 +1,7 @@
 {% extends "maxproductos/base.html" %}
 
 
-{% block title %} Registrar Usuario {% endblock %}
+{% block title %} Modificar Producto {% endblock %}
 
 {% block content %}
 <hr>
@@ -11,10 +11,9 @@
 <form action="" method="POST">
     {% csrf_token %}
     <table>
-        {{ formulario.as_table }}
+        {{ form.as_table }}
     </table>
-    <input type="submit" value="Registrar">
+    <input type="submit" value="Modificar">
 </form>
-{{request.POST}}
 
 {% endblock %}
