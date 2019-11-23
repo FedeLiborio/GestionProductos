@@ -6,12 +6,45 @@ from datetime import datetime
 import calendar
 from urllib.request import urlopen
 import json
+from django.shortcuts import render
+from django.views.generic.base import TemplateView
+from django.views.generic.list import ListView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.urls import reverse, reverse_lazy
+from maxproductos.models import Producto, Proveedor, Producto, MetodoDePago, TipoProducto
+from .form import ProveedorForm
+from django.shortcuts import redirect
+from django.contrib.admin.views.decorators import staff_member_required
+#from django.utils.decorators import method_decarator
 
-lista=[]
+# class StaffRequiredMixin(object):
+#     def dispatch(self, request, *args, **kwargs):
+#         if not request.user.is_staff:
+#             return redirect(reverse_lazy('admin:login'))
+#         #print(request.user)
+#         return super(StaffRequiredMixin,self).dispatch(request, *args, **kwargs)
 
-# def agregar_lista(request,id):
-#     lista.append(id)
 
+class ProductoCreate(CreateView):
+    # nombre del template = (todo minuscula) nombreModelo_form
+    model = Producto
+    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_staff:
+           return redirect(reverse_lazy('admin:login'))
+        #print(request.user)
+        return super(ProductoCreate,self).dispatch(request, *args, **kwargs)
+
+    success_url= reverse_lazy('/')
+
+
+class ProductoUpdate(UpdateView):
+    model = Producto
+    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
+    template_name_suffix = '_update_form'
+
+    success_url = reverse_lazy('/')
 
 # class MostrarCatalogoView(TemplateView):
 #     template_name = "maxproductos/mostrar_catalogo.html"
@@ -23,38 +56,63 @@ lista=[]
 def mostrar_catalogo_v(request):
     list_Producto = Producto.objects.all()
     if 'carrito' not in request.session:
-        request.session['carrito'] = [] 
+        request.session['carrito'] = []
 
     if (request.method == 'GET'):
         if 'elId' in request.GET:
-            dic= request.GET # devuelve un diccionario
+            dic = request.GET  # devuelve un diccionario
             id = dic['elId']
             id = int(id)
             #id= int(dic['elId'])
 
-            print(type(id))
-            carritoAux= request.session['carrito']
-            if id  not in carritoAux:
-                carritoAux.append(id) 
-            request.session['carrito']= carritoAux
+            # print(type(id))
+            carritoAux = request.session['carrito']
+            if id not in carritoAux:
+                carritoAux.append(id)
+            request.session['carrito'] = carritoAux
+        # if 'clasificacion' in request.GET:
+        #     dic = request.GET
+        #     if dic['clasificacion'] == "1":
+        #         p = Producto.objects.get(id=1)
+            return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto})            
 
-    return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto, "carrito": lista})
+
+    tipoProductos = TipoProducto.objects.all()
+    # print(tipoProductos)
+
+    proveedor = Proveedor.objects.all()
+    # print(proveedor['Proveedor'])
+
+    return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto})
 
 
 def iniciar_sesion_v(request):
     return render(request, 'maxproductos/iniciar_sesion.html')
 
 
+class InicioSesionView(TemplateView):
+    template_name = "maxproductos/iniciar_sesion.html"
+
+#adsasd
 def registrar_usuario_v(request):
     formulario_proveedor = ProveedorForm()
     # print(request.POST)
-    return render(request, 'maxproductos/registrar_usuario.html', {'formulario': formulario_proveedor})
+    return render(request, 'maxproductos/registrar_usuario.html', {'formulario_proveedor': formulario_proveedor})
+
 
 def detalle_producto_v(request, idProducto):
-    producto= Producto.objects.get(id=idProducto)
+    producto = Producto.objects.get(id=idProducto)
     #producto= Producto.objects.filter(id=id)
+
+    return render(request, 'maxproductos/detalle_producto.html', {
+        'producto': producto,
+        'carrito': request.session['carrito']
+    })
+
+def mostrar_perfil_proveedor_v(request):
     
-    return render (request, 'maxproductos/detalle_producto.html',{'producto':producto,'carrito':request.session['carrito']})
+    return render(request, 'registration/perfil_proveedor.html')
+        
 
 
 ##################################################################################################
@@ -65,20 +123,20 @@ def verCarrito(request):
     #me aseguro que el carrito exista en la session, por las dudas
     if 'carrito' not in request.session:
         request.session['carrito'] = []
-    
+
     carritoAux = request.session['carrito']
     carritoAux.append(1)
     carritoAux.append(2)
     #traigo todos los productos existentes
     productosQuerySet = Producto.objects.all()
 
-    #inicializo las variables que voy a pasar al template
+    # inicializo las variables que voy a pasar al template
     productosAgregados = []
     proveedores = []
     total = 0
     horariosProveedor = Horario.objects.all()
 
-    #guardo los objetos Producto dentro de productosAgregados y extraigo los proveedores
+    # guardo los objetos Producto dentro de productosAgregados y extraigo los proveedores
     for producto in productosQuerySet:
         if producto.id in carritoAux:
             productosAgregados.append(producto)

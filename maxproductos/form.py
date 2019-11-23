@@ -1,5 +1,7 @@
 from django import forms
 
+
+#no sirve
 class ProveedorForm(forms.Form):
     nombre= forms.CharField(label='Nombre', required=True, widget= forms.TextInput(
         attrs={'placeholder':'Escribe tu nombre'}

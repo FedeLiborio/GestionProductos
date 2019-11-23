@@ -1,0 +1,22 @@
+{% extends "maxproductos/base.html" %}
+
+{% block title %} LOGIN {% endblock %}
+
+{% block content %}
+
+<hr>
+<hr>
+<hr>
+<hr>
+<h3>INICIO DE SESION</h3>
+<form action="" method="POST">
+    {% csrf_token %}
+    <table>
+        {{ form.as_table }}
+    </table>
+    <input type="submit" value="Iniciar">
+</form>
+
+{{request.user}}
+
+{% endblock %}
