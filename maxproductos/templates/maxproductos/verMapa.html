@@ -1,0 +1,69 @@
+{% extends "maxproductos/base.html" %}
+
+{% block head %}
+<style>
+  #map {
+    width: 70vw;
+    height: 80vh;
+  }
+</style>
+
+{% endblock %}
+
+{% block title %}
+Mapa
+{% endblock %}
+
+
+
+{% block content %}
+
+<hr>
+<hr>
+<hr>
+<hr>
+
+
+  <div id="map">
+   
+  </div>
+
+
+
+{% endblock %}
+
+
+
+{% block scripts %}
+<script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y&callback=iniciarMapa"></script>
+ <script>
+    var data
+      function iniciarMapa() {
+        var map = new google.maps.Map(document.getElementById("map"), {
+          zoom: 13,
+          center: { lat: -54.8, lng: -68.3 }
+        });
+        
+        /*
+        //Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
+        url = "https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+        $.getJSON(url, function (json) {
+          latitud = json.results[0].geometry.location.lat;
+          longitud = json.results[0].geometry.location.lng;
+
+          punto = { lat: latitud, lng: longitud };
+          var marker = new google.maps.Marker({ position: punto, map: map });
+        }
+        );
+        */
+        
+        var punto;
+        var marker;
+        {% for c in coordenadas %}
+          punto = {lat: {{c.latitud}}, lng: {{c.longitud}}};
+          marker = new google.maps.Marker({ position: punto, map: map });
+        {% endfor %}
+      }
+    </script>
+{% endblock %}
