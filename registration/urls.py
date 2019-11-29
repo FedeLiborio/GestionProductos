@@ -8,4 +8,5 @@ urlpatterns = [
 
     path('RegistrarProveedor/', views.registrar_usuario_proveedor_v, name='registrar_Proveedor'),
     path('RegistrarCliente/', views.registrar_usuario_cliente_v, name='registrar_Cliente'),
+    path('perfilProveedor/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
 ]

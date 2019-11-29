@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 #from django.views.generic.base import TemplateView
-from maxproductos.models import Producto, Proveedor, Producto, Usuario, MetodoDePago, Pedido, Horario, Cliente
+from maxproductos.models import Producto, Proveedor, Producto, MetodoDePago, Pedido, Horario, Cliente
 from .form import ProveedorForm
 from datetime import datetime
 import calendar
@@ -16,41 +16,6 @@ from .form import ProveedorForm
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
 #from django.utils.decorators import method_decarator
-
-# class StaffRequiredMixin(object):
-#     def dispatch(self, request, *args, **kwargs):
-#         if not request.user.is_staff:
-#             return redirect(reverse_lazy('admin:login'))
-#         #print(request.user)
-#         return super(StaffRequiredMixin,self).dispatch(request, *args, **kwargs)
-
-
-class ProductoCreate(CreateView):
-    # nombre del template = (todo minuscula) nombreModelo_form
-    model = Producto
-    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-           return redirect(reverse_lazy('admin:login'))
-        #print(request.user)
-        return super(ProductoCreate,self).dispatch(request, *args, **kwargs)
-
-    success_url= reverse_lazy('/')
-
-
-class ProductoUpdate(UpdateView):
-    model = Producto
-    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
-    template_name_suffix = '_update_form'
-
-    success_url = reverse_lazy('/')
-
-# class MostrarCatalogoView(TemplateView):
-#     template_name = "maxproductos/mostrar_catalogo.html"
-
-#     def get(self, request, *args, **kwargs)
-#     return render(request, self.template_name, {'sd': 'asd'})
 
 
 def mostrar_catalogo_v(request):
@@ -109,15 +74,11 @@ def detalle_producto_v(request, idProducto):
         'carrito': request.session['carrito']
     })
 
-def mostrar_perfil_proveedor_v(request):
-    
-    return render(request, 'registration/perfil_proveedor.html')
-        
-
-
 ##################################################################################################
 
 def verCarrito(request):
+    now = datetime.now()
+    fechaActual= str(now.year) + "-" + str(now.month) + "-" + str(now.day)
     diasDeLaSemana = {0: 'Lunes', 1: 'Martes', 2: 'Miercoles', 3: 'Jueves', 4: 'Viernes', 5: 'Sabado', 6: 'Domingo'}
 
     #me aseguro que el carrito exista en la session, por las dudas
@@ -125,8 +86,8 @@ def verCarrito(request):
         request.session['carrito'] = []
 
     carritoAux = request.session['carrito']
-    carritoAux.append(1)
-    carritoAux.append(2)
+    #carritoAux.append(1)
+    #carritoAux.append(2)
     #traigo todos los productos existentes
     productosQuerySet = Producto.objects.all()
 
@@ -187,8 +148,8 @@ def verCarrito(request):
                 return redirect('proceder_Checkout')
             else:
                 print("Datos incorrectos. Vuelva a intentar")
-
-    return render(request, "maxproductos/verCarrito.html", {"elCarrito": productosAgregados, "losProveedores": proveedores, "total": total, "horarios": horariosProveedor})
+    print(proveedores)
+    return render(request, "maxproductos/verCarrito.html", {"elCarrito": productosAgregados, "losProveedores": proveedores, "total": total, "horarios": horariosProveedor, 'fechaActual': fechaActual})
 
 def verCheckout(request):
     pagos = MetodoDePago.objects.all().values()
@@ -234,13 +195,61 @@ def verCheckout(request):
                     pedido.productos.add(p)
     return render(request, 'maxproductos/checkout.html', {'losPagos': pagos})
 
+def verPedidos(request):
+
+    pedidos = Pedido.objects.filter(proveedor = request.user.proveedor)
+    productos = Producto.objects.filter(proveedor = request.user.proveedor)
+    
+    pedidosSinConfirmar_Producto = []
+    pedidosConfirmado_Producto = []
+
+    if (request.method == 'GET'):
+        if 'confirmar' in request.GET:
+            dic=request.GET
+            pedido = Pedido.objects.get(id = dic['confirmar'])
+            pedido.confirmado = 1
+            pedido.save()
+            print(pedido)
+        if 'confirmarEntrega' in request.GET:
+            dic=request.GET
+            pedido = Pedido.objects.get(id = dic['confirmarEntrega'])
+            pedido.entregado = 1
+            pedido.save()
+            print(pedido)
+
+    for p in pedidos:
+        if p.confirmado == 0:
+            pedidosSinConfirmar_Producto.append({"pedido": p, "producto": Producto.objects.filter(pedido= p)})
+        else:
+            if p.entregado == 0:
+                pedidosConfirmado_Producto.append({"pedido": p, "producto": Producto.objects.filter(pedido= p)})
+
+    #print(pedidosConfirmado_Producto)
+    return render(request, 'maxproductos/pedidos.html',{'pedidosSinConfirmar_Producto': pedidosSinConfirmar_Producto, 'pedidosConfirmado_Producto': pedidosConfirmado_Producto})
+
 def verMapa(request):
     coordenadas=[]
-    pedidosQuerySet = Pedido.objects.all()
+    pedidosQuerySet = Pedido.objects.filter(confirmado=1, entregado=0)
     for p in pedidosQuerySet:
         latAux = str(p.latitud).replace(',','.')
         lngAux = str(p.longitud).replace(',','.')
         coordenadas.append({'latitud': latAux, 'longitud': lngAux})
 
-    return render(request, 'maxproductos/verMapa.html',{'coordenadas': coordenadas})
+    destinoYOrigenLatitud = Proveedor.objects.get(id = request.user.proveedor.id).latitud
+    destinoYOrigenLongitud = Proveedor.objects.get(id = request.user.proveedor.id).longitud
 
+    destinoYOrigenLatitud = str(destinoYOrigenLatitud).replace(',','.')
+    destinoYOrigenLongitud = str(destinoYOrigenLongitud).replace(',','.')
+    
+    #url = "https://maps.googleapis.com/maps/api/directions/json?origin=-54.8118619000,-68.3293394000&destination=-54.8076320000,-68.3130340000&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+
+    return render(request, 'maxproductos/verMapa.html',{'coordenadas': coordenadas, 'destinoYOrigenLatitud': destinoYOrigenLatitud, 'destinoYOrigenLongitud': destinoYOrigenLongitud})
+
+def verHistorialVentas(request):
+    productos = Producto.objects.filter(proveedor = request.user.proveedor)
+    pedidos = Pedido.objects.filter(proveedor = request.user.proveedor, entregado = 1).order_by('-fecha')
+
+    pedidosHistorial = []
+    for p in pedidos:
+        pedidosHistorial.append({"pedido": p, "producto": Producto.objects.filter(pedido= p)})
+    return render(request, 'maxproductos/historialVentas.html',{'pedidosHistorial': pedidosHistorial})

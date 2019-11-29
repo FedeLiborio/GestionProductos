@@ -9,6 +9,7 @@ Carrito
     <hr>
     <hr>
     <hr>
+    <h2>Carro de compras</h2>
     
     {% comment %}
         Si el carrito esta vacio se muestra una mensaje
@@ -26,8 +27,9 @@ Carrito
         
         <ul class="nav nav-tabs" id="myTab" role="tablist">
             {% for prov in losProveedores %}
+
             <li class="nav-item">
-                <a class="nav-link" id="home-tab" data-toggle="tab" href="#{{prov.nombre}}" role="tab" aria-controls="home" aria-selected="true">{{prov.nombre}}</a>
+                <a class="nav-link" id="home-tab" data-toggle="tab" href="#{{prov.user.username}}" role="tab" aria-controls="home" aria-selected="true">{{prov.user.username}}</a>
             </li>
             {% endfor %}
         </ul>
@@ -37,7 +39,8 @@ Carrito
         <form action="{% url 'ver_Carrito' %}" method="GET">
             <div class="tab-content" id="myTabContent">
                 {% for prov in losProveedores %}
-                <div class="tab-pane fade" id="{{prov.nombre}}" role="tabpanel" aria-labelledby="home-tab">
+                <div class="tab-pane fade" id="{{prov.user.username}}" role="tabpanel" aria-labelledby="home-tab">
+                    <p>Productos agregados:</p>
                     <ul>
                         {% for producto in elCarrito %}
                             {% if prov == producto.proveedor %}
@@ -55,9 +58,9 @@ Carrito
                         {% endfor %}
                     </ul>
 
-                    <input type="date"  name="fecha{{prov.id}}" min="2018-01-01" max="2018-12-31" required>
+                    <input type="date"  name="fecha{{prov.id}}" min="{{fechaActual}}" value="{{fechaActual}}" required>
 
-                    <input type="time"  name="tiempo{{prov.id}}"  required>
+                    <input type="time"  name="tiempo{{prov.id}}"  value="00:00"required>
                     
                 </div>
                 {% endfor %}

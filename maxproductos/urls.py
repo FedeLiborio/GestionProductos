@@ -7,15 +7,15 @@ urlpatterns = [
     path('detalleProducto/<int:idProducto>/', views.detalle_producto_v, name='detalle_Producto'),
     path('verCarrito/', views.verCarrito, name='ver_Carrito'),
     path('procederACheckout/', views.verCheckout, name='proceder_Checkout'),
-    path('verMapa/', views.verMapa),
+    path('pedidos/', views.verPedidos, name='ver_Pedidos'),
+    path('verMapa/', views.verMapa, name='ver_Mapa'),
+    path('historialVentas/', views.verHistorialVentas, name='ver_Historial_Ventas'),
 
-    path('perfilProveedor/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
+    
     #path('perfilProveedor/<int:idProveedor>/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
     
     
     path('iniciarSesion/', views.InicioSesionView.as_view(), name='ini'),
-    path('creacionProducto/', views.ProductoCreate.as_view(), name='crear_Producto'),
-    path('modificarProducto/', views.ProductoUpdate.as_view(), name='modificar_Producto'),
 
 
     # parece ser que debe terminar el nombre(no name) de la url con / para que

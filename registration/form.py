@@ -18,9 +18,9 @@ class UserForm (UserCreationForm):
 class ProveedorUserForm(ModelForm):
     class Meta:
         model = Proveedor # ME VIVO AUTO CAGANDOOOOOO
-        exclude = ['user']
+        exclude = ['user', 'longitud', 'latitud', 'calificacion']
 
 class ClienteUserForm(ModelForm):
     class Meta:
         model = Cliente # ME VIVO AUTO CAGANDOOOOOO
-        exclude = ['user']
+        exclude = ['user', 'latitud', 'longitud']

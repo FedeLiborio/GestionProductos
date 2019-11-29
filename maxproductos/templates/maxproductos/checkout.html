@@ -9,6 +9,9 @@
     <hr>
     <hr>
     <hr>
+
+    <h2>Checkout</h2>
+
     <p>
         Elija metodo de pago:
     </p>
@@ -27,14 +30,14 @@
         <input type="radio" id="dirOtra" name="elegirDir" value="otra" onclick="habilitarOtraDir()"> Elegir otra dirección:<br>
         
         <label for="nuevaCalleNombre">Calle:</label>
-        <input type="text" id="nuevaCalleNombre" name="nuevaCalle"><br>
+        <input class="form-control" type="text" id="nuevaCalleNombre" name="nuevaCalle"><br>
         
         <label for="nuevaCalleNumero">Numero:</label>
-        <input type="text" id="nuevaCalleNumero" name="nuevaCalleNumero"><br>
+        <input class="form-control" type="text" id="nuevaCalleNumero" name="nuevaCalleNumero"><br>
         
         <input type="hidden" name="solicitudRealizarPedido">
 
-        <input type="submit" value="Efectuar compra">
+        <input type="submit" value="Efectuar compra" class="btn btn-success">
     </form>
     
     <script>

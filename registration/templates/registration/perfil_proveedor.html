@@ -10,14 +10,16 @@
 <h1>BIENVENIDO : {{request.user.username}}</h1>
 
 <div class="row">
-    <div class="col-2" style="background-color: blue;">
+    <div class="col-2">
         <div class="btn-group-vertical">
-            <button type="button" class="btn btn-primary">Informacion</button>
-            <button type="button" class="btn btn-primary">Samsung</button>
-            <button type="button" class="btn btn-primary">Sony</button>
+            <button type="button" class="btn btn-primary"> Informacion  </button>
+            <button type="button" class="btn btn-primary"><a style="color: white;" href="{% url 'ver_Historial_Ventas' %}">Historial de Ventas</a></button>
+            <button type="button" class="btn btn-primary"><a style="color: white;"href="{% url 'ver_Pedidos' %}">Pedidos</a></button>
+            <button type="button" class="btn btn-primary">Productos</button>
+            <button type="button" class="btn btn-primary"><a style="color: white;"href="{% url 'ver_Mapa' %}">Mapa</a></button>
         </div>
     </div>
-    <div class="col" style="background-color: red;">
+    <div class="col" ">
         {% block contentProveedor %} 
         
         {% endblock %}  

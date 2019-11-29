@@ -6,10 +6,12 @@ from .form import ProveedorUserForm, ClienteUserForm, UserForm
 from django.contrib.auth.forms import UserCreationForm
 from maxproductos.models import Proveedor, Cliente
 from django.contrib.auth.views import LoginView
+from urllib.request import urlopen
+import json
 
 
 def registrar_usuario_proveedor_v(request):
-
+    context={}
     if request.method == 'POST':
         form_user = UserForm(request.POST)
         form_user_proveedor = ProveedorUserForm(request.POST)
@@ -26,8 +28,6 @@ def registrar_usuario_proveedor_v(request):
 
             calle = request.POST.get('calle')
             numero = request.POST.get('numero')
-            latitud = request.POST.get('latitud')
-            longitud = request.POST.get('longitud')
             telefono = request.POST.get('telefono')
             descripcionNegocio = request.POST.get('descripcionNegocio')
             calificacion = request.POST.get('calificacion')
@@ -42,11 +42,19 @@ def registrar_usuario_proveedor_v(request):
             user_proveedor.user = user
             user_proveedor.calle = calle
             user_proveedor.numero = numero
-            user_proveedor.latitud = latitud
-            user_proveedor.longitud = longitud
+
+            calleNombreAux = calle.replace(" ","+")
+            calleNumero = numero
+            #Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + calleNumero + "+" + calleNombreAux + "&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+            json_url = urlopen(url)
+            data = json.loads(json_url.read())
+            user_proveedor.latitud = data['results'][0]['geometry']['location']['lat']
+            user_proveedor.longitud = data['results'][0]['geometry']['location']['lng']
+
             user_proveedor.telefono = telefono
             user_proveedor.descripcionNegocio = descripcionNegocio
-            user_proveedor.calificacion = calificacion
+            user_proveedor.calificacion = 0
             user_proveedor.save()
             # sreturn render(request, 'maxproductos/mostrar_Catalogo.html')
             return redirect(reverse_lazy('/'))
@@ -60,12 +68,15 @@ def registrar_usuario_proveedor_v(request):
 
 
 def registrar_usuario_cliente_v(request):
-
+    context={}
     if request.method == 'POST':
         form_user = UserForm(request.POST)
         form_user_cliente = ClienteUserForm(request.POST)
+        print(form_user.is_valid())
+        print(form_user_cliente.is_valid())
         if form_user.is_valid() and form_user_cliente.is_valid():
             print(request.POST)
+            print("entrad")
 
             #username= form_user.cleaned_data['username']
             username = request.POST.get('username')
@@ -77,8 +88,7 @@ def registrar_usuario_cliente_v(request):
 
             calle = request.POST.get('calle')
             numero = request.POST.get('numero')
-            latitud = request.POST.get('latitud')
-            longitud = request.POST.get('longitud')
+            
             telefono = request.POST.get('telefono')
 
             user = User.objects.create_user(username, email, password1)
@@ -91,11 +101,20 @@ def registrar_usuario_cliente_v(request):
             user_cliente.user = user
             user_cliente.calle = calle
             user_cliente.numero = numero
-            user_cliente.latitud = latitud
-            user_cliente.longitud = longitud
+
+            calleNombreAux = calle.replace(" ","+")
+            calleNumero = numero
+            #Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
+            url = "https://maps.googleapis.com/maps/api/geocode/json?address=" + calleNumero + "+" + calleNombreAux + "&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
+            json_url = urlopen(url)
+            data = json.loads(json_url.read())
+            user_cliente.latitud = data['results'][0]['geometry']['location']['lat']
+            user_cliente.longitud = data['results'][0]['geometry']['location']['lng']
+ 
             user_cliente.telefono = telefono
             user_cliente.save()
             return redirect(reverse_lazy('/'))
+            
     else:
         form_user = UserForm()
         form_user_cliente = ClienteUserForm()
@@ -104,6 +123,9 @@ def registrar_usuario_cliente_v(request):
 
     return render(request, 'registration/registrar_usuario_cliente.html', context)
 
+def mostrar_perfil_proveedor_v(request):
+    
+    return render(request, 'registration/perfil_proveedor.html')
 
 # class RegistrarUsuario(CreateView):
 #     model = User

@@ -1,4 +1,4 @@
-{% extends "maxproductos/base.html" %}
+{% extends "registration/perfil_proveedor.html" %}
 
 {% block head %}
 <style>
@@ -16,13 +16,7 @@ Mapa
 
 
 
-{% block content %}
-
-<hr>
-<hr>
-<hr>
-<hr>
-
+{% block contentProveedor %}
 
   <div id="map">
    
@@ -38,13 +32,19 @@ Mapa
 <script async defer
   src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y&callback=iniciarMapa"></script>
  <script>
-    var data
+    var data;
+    var map;
+    var directionsService;
+    var directionsRenderer;
+
       function iniciarMapa() {
-        var map = new google.maps.Map(document.getElementById("map"), {
+        directionsService = new google.maps.DirectionsService();
+        directionsRenderer = new google.maps.DirectionsRenderer();
+        map = new google.maps.Map(document.getElementById("map"), {
           zoom: 13,
           center: { lat: -54.8, lng: -68.3 }
         });
-        
+        directionsRenderer.setMap(map);
         /*
         //Se envia una direccion por la url y se recibe un json con varios datos, entre ellos la latitud y longitud
         url = "https://maps.googleapis.com/maps/api/geocode/json?address=2134+Gobernador+PAz&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
@@ -59,11 +59,44 @@ Mapa
         */
         
         var punto;
-        var marker;
+        var waypts = [];
+
+        punto = {lat: {{destinoYOrigenLatitud}}, lng: {{destinoYOrigenLongitud}}};
+        var marker = new google.maps.Marker({ position: punto, map: map});
+ 
         {% for c in coordenadas %}
+
           punto = {lat: {{c.latitud}}, lng: {{c.longitud}}};
-          marker = new google.maps.Marker({ position: punto, map: map });
+          var marker = new google.maps.Marker({ position: punto, map: map});
+  
+          waypts.push({
+            location: {lat: {{c.latitud}}, lng:{{c.longitud}}},
+            stopover: true
+          });
+
         {% endfor %}
+        
+        var request = {
+          origin: {lat: {{destinoYOrigenLatitud}}, lng:{{destinoYOrigenLongitud}}},
+          destination: {lat: {{destinoYOrigenLatitud}}, lng: {{destinoYOrigenLongitud}}},
+          waypoints: waypts,
+          optimizeWaypoints: true,
+          travelMode: 'DRIVING'
+        };
+        directionsService.route(request, function(result, status) {
+          if (status == 'OK') {
+            directionsRenderer.setDirections(result);
+            directionsRenderer.setOptions({
+              suppressMarkers: true
+            });
+          }
+        });
+
+
       }
+
+     
+        
+    
     </script>
 {% endblock %}
