@@ -7,7 +7,9 @@ urlpatterns = [
     path('detalleProducto/<int:idProducto>/', views.detalle_producto_v, name='detalle_Producto'),
     path('verCarrito/', views.verCarrito, name='ver_Carrito'),
     path('procederACheckout/', views.verCheckout, name='proceder_Checkout'),
-    path('verMapa/', views.verMapa),
+    path('pedidos/', views.verPedidos, name='ver_Pedidos'),
+    path('verMapa/', views.verMapa, name='ver_Mapa'),
+    path('historialVentas/', views.verHistorialVentas, name='ver_Historial_Ventas'),
 
     path('perfilProveedor/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
     path('perfilCliente/', views.mostrar_perfil_cliente_v, name='mostrar_Perfil_Cliente'),
