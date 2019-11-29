@@ -10,12 +10,12 @@ urlpatterns = [
     path('verMapa/', views.verMapa),
 
     path('perfilProveedor/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
+    path('perfilCliente/', views.mostrar_perfil_cliente_v, name='mostrar_Perfil_Cliente'),
+    
     #path('perfilProveedor/<int:idProveedor>/', views.mostrar_perfil_proveedor_v, name='mostrar_Perfil_Proveedor'),
     
     
-    path('iniciarSesion/', views.InicioSesionView.as_view(), name='ini'),
-    path('creacionProducto/', views.ProductoCreate.as_view(), name='crear_Producto'),
-    path('modificarProducto/', views.ProductoUpdate.as_view(), name='modificar_Producto'),
+    #path('iniciarSesion/', views.InicioSesionView.as_view(), name='ini'),
 
 
     # parece ser que debe terminar el nombre(no name) de la url con / para que

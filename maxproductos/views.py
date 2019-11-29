@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 #from django.views.generic.base import TemplateView
-from maxproductos.models import Producto, Proveedor, Producto, Usuario, MetodoDePago, Pedido, Horario, Cliente
+from maxproductos.models import Producto, Proveedor, Producto, MetodoDePago, Pedido, Horario, Cliente
 from .form import ProveedorForm
 from datetime import datetime
 import calendar
@@ -15,6 +15,8 @@ from maxproductos.models import Producto, Proveedor, Producto, MetodoDePago, Tip
 from .form import ProveedorForm
 from django.shortcuts import redirect
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.models import User
+
 #from django.utils.decorators import method_decarator
 
 # class StaffRequiredMixin(object):
@@ -25,27 +27,6 @@ from django.contrib.admin.views.decorators import staff_member_required
 #         return super(StaffRequiredMixin,self).dispatch(request, *args, **kwargs)
 
 
-class ProductoCreate(CreateView):
-    # nombre del template = (todo minuscula) nombreModelo_form
-    model = Producto
-    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
-
-    def dispatch(self, request, *args, **kwargs):
-        if not request.user.is_staff:
-           return redirect(reverse_lazy('admin:login'))
-        #print(request.user)
-        return super(ProductoCreate,self).dispatch(request, *args, **kwargs)
-
-    success_url= reverse_lazy('/')
-
-
-class ProductoUpdate(UpdateView):
-    model = Producto
-    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
-    template_name_suffix = '_update_form'
-
-    success_url = reverse_lazy('/')
-
 # class MostrarCatalogoView(TemplateView):
 #     template_name = "maxproductos/mostrar_catalogo.html"
 
@@ -54,9 +35,33 @@ class ProductoUpdate(UpdateView):
 
 
 def mostrar_catalogo_v(request):
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
+    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
     list_Producto = Producto.objects.all()
+    list_TipoProducto = TipoProducto.objects.all()
+    list_proveedor =  Proveedor.objects.all()
+
+    list_id_users_proveedor= []
+    for it in list_proveedor:
+        list_id_users_proveedor.append(it.user.id)
+        #print ('asdsadasd ', it.user.id)
+
     if 'carrito' not in request.session:
         request.session['carrito'] = []
+
+    
+    if 'clasificacion' in request.GET:
+        tipoElegido = request.GET.get('clasificacion') 
+        print('tipoElegido: ', tipoElegido)
+
+        if (tipoElegido != 'Seleccione...'):
+            #print (type(tipoElegido))
+            tipoElegido= int(tipoElegido)
+            #print(type(tipoElegido))
+            list_Producto = Producto.objects.filter(tipo = tipoElegido)
+            #print ('NO 0')
 
     if (request.method == 'GET'):
         if 'elId' in request.GET:
@@ -77,13 +82,13 @@ def mostrar_catalogo_v(request):
             return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto})            
 
 
-    tipoProductos = TipoProducto.objects.all()
+    #tipoProductos = TipoProducto.objects.all()
     # print(tipoProductos)
 
-    proveedor = Proveedor.objects.all()
+    #proveedor = Proveedor.objects.all()
     # print(proveedor['Proveedor'])
 
-    return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto})
+    return render(request, 'maxproductos/mostrar_catalogo.html', {"objproducto": list_Producto, 'list_TipoProducto': list_TipoProducto, 'list_id_users_proveedor':list_id_users_proveedor})
 
 
 def iniciar_sesion_v(request):
@@ -112,8 +117,11 @@ def detalle_producto_v(request, idProducto):
 def mostrar_perfil_proveedor_v(request):
     
     return render(request, 'registration/perfil_proveedor.html')
-        
-
+ 
+def mostrar_perfil_cliente_v(request):
+    
+    return render(request, 'registration/perfil_cliente.html')
+    
 
 ##################################################################################################
 

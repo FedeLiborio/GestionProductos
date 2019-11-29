@@ -138,11 +138,11 @@
                     <rect width="100%" height="1000" fill="#777" /></svg>
                 <div class="container">
                     <div class="carousel-caption text-left">
-                        <h1>Example headline.</h1>
+                        <h1>Producto nuevo.</h1>
                         <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta
                             gravida at eget
                             metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Sign up today</a></p>
+                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Agregar al carrito</a></p>
                     </div>
                 </div>
             </div>
@@ -152,11 +152,11 @@
                     <rect width="100%" height="100%" fill="#777" /></svg>
                 <div class="container">
                     <div class="carousel-caption">
-                        <h1>Another example headline.</h1>
+                        <h1>Producto nuevo.</h1>
                         <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta
                             gravida at eget
                             metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Learn more</a></p>
+                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Agregar al carrito</a></p>
                     </div>
                 </div>
             </div>
@@ -166,11 +166,11 @@
                     <rect width="100%" height="100%" fill="#777" /></svg>
                 <div class="container">
                     <div class="carousel-caption text-right">
-                        <h1>One more for good measure.</h1>
+                        <h1>Producto nuevo.</h1>
                         <p>Cras justo odio, dapibus ac facilisis in, egestas eget quam. Donec id elit non mi porta
                             gravida at eget
                             metus. Nullam id dolor id nibh ultricies vehicula ut id elit.</p>
-                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Browse gallery</a></p>
+                        <p><a class="btn btn-lg btn-primary" href="#" role="button">Agregar al carrito</a></p>
                     </div>
                 </div>
             </div>
@@ -185,13 +185,15 @@
         </a>
     </div>
 
+    <p> <b>Selecione un filtro</b> </p>
     <form action="{% url '/' %}" method="GET">
         {% csrf_token %}
         <select name="clasificacion">
-            <option value="1">Bebida</option>
-            <option value="2">Alimento</option>
-            <option value="3">Informatica</option>
-        </select>
+            <option value="0">Seleccione...</option>
+                {% for it in list_TipoProducto %}
+                    <option value=" {{it.id}} "> {{ it.nombre}} </option>
+                {% endfor%}
+            </select>
         <button type="submit" class="btn btn-success">Aplicar</button>
     </form>
 
@@ -218,11 +220,22 @@
                 <p>{{it.tipo}}</p>
                 <p><a class="btn btn-primary" href="{% url 'detalle_Producto' it.id %}" role="button">Mas informacion
                         &raquo;</a></p>
-                <form action="{% url '/' %}" method="GET">
-                    {% csrf_token %}
-                    <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al
-                        carro</button>
-                </form>
+
+                {% if request.user.is_authenticated %}
+                    {% if not request.user.id in list_id_users_proveedor %}
+                        <form action="{% url '/' %}" method="GET">
+                            {% csrf_token %}
+                            <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al
+                                carro</button>
+                        </form>
+                    {% endif %}
+                {% else %}
+                    <form action="{% url '/' %}" method="GET">
+                        {% csrf_token %}
+                        <button type="submit" name="elId" value="{{it.id}}" class="btn btn-success">Agregar al
+                            carro</button>
+                    </form>        
+                {% endif %}        
             </div><!-- /.col-lg-4 -->
             {% endfor %}
         </div><!-- /.row -->
@@ -240,29 +253,34 @@
 
 
 
-<!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
-<a href="{% url 'ver_Carrito' %}"> ver carrito</a> <br>
-<a href="{% url 'crear_Producto' %}"> CREAR PRODUCTO</a> <br>
-<a href="{% url 'modificar_Producto' %}"> MODIFICAR PRODUCTO</a> <br>
-<a href="{% url 'mostrar_Perfil_Proveedor' %}"> PERFIL PROVEEDOR</a> <br>
-<a href="{% url 'registrar_Proveedor' %}"> REGISTRAR PROVEEDOR</a> <br>
-<a href="{% url 'registrar_Cliente' %}"> REGISTRAR CLIENTE</a> <br>
 
-<a href="{% url 'admin:login' %}"> ADMINNN</a> <br>
-<a href="admin/"> ADMIN</a> <br>
-
-
-
-{% if request.user.is_authenticated %}
-    <a href="{% url 'logout' %}">Cerrar Sesion</a> <br>
-    <a href="{% url 'mostrar_Perfil_Proveedor' %}">Perfil</a> <br>
-{% else %}
-<a href="{% url 'login' %}">Iniciar Sesion</a> <br>
-{% endif %}
-
+<div class="row">
+    <div class="col-4">
+        <!-- <a href="{% url 'admin:login' %}"> ADMINNN</a> <br>
+        <a href="admin/"> ADMIN</a> <br> -->
+    </div>
+    <div class="col-4">
+        {% comment %}
+        {% if request.user.is_authenticated %}
+            {% if request.user.id in list_id_users_proveedor %}
+                <a href="{% url 'mostrar_Perfil_Proveedor' %}">Perfil</a> <br>
+            {% else %}
+                <a href="{% url 'mostrar_Perfil_Cliente' %}">Perfil</a> <br>
+                <a href="{% url 'ver_Carrito' %}"> Ver carrito</a> <br>
+            {% endif %}
+            <!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
+            
+            <a href="{% url 'logout' %}">Cerrar Sesion</a> <br>
+        {% else %}
+            <a href="{% url 'login' %}">Iniciar Sesion</a> <br>
+            <a href="{% url 'registrar_Proveedor' %}"> REGISTRAR PROVEEDOR</a> <br>
+            <a href="{% url 'registrar_Cliente' %}"> REGISTRAR CLIENTE</a> <br>
+        {% endif %}
+        {% endcomment %}
+    </div>
+</div>
 <p>Usuario Actual: {{request.user}} </p>
-<p>ID: {{request.user.id}} </p>
-<p>Calle: {{request.user.proveedor.id}} </p>
+<p>ID user: {{request.user.id}} </p> 
 
 {% comment %}
 {{ test }}

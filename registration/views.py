@@ -4,17 +4,25 @@ from django.shortcuts import redirect
 from django.contrib.auth.models import User
 from .form import ProveedorUserForm, ClienteUserForm, UserForm
 from django.contrib.auth.forms import UserCreationForm
-from maxproductos.models import Proveedor, Cliente
+from maxproductos.models import Proveedor, Cliente, Producto
 from django.contrib.auth.views import LoginView
+from django.views.generic.edit import CreateView, UpdateView, DeleteView
+from django.contrib.auth import login
 
 
 def registrar_usuario_proveedor_v(request):
 
+    context = {}
+
     if request.method == 'POST':
+        print('ENTRE AL IF')
         form_user = UserForm(request.POST)
         form_user_proveedor = ProveedorUserForm(request.POST)
+        print('LLEGA ACA')
+        print(form_user.is_valid())
+        print(form_user_proveedor.is_valid())
+
         if form_user.is_valid() and form_user_proveedor.is_valid():
-            print(request.POST)
 
             #username= form_user.cleaned_data['username']
             username = request.POST.get('username')
@@ -48,18 +56,24 @@ def registrar_usuario_proveedor_v(request):
             user_proveedor.descripcionNegocio = descripcionNegocio
             user_proveedor.calificacion = calificacion
             user_proveedor.save()
-            # sreturn render(request, 'maxproductos/mostrar_Catalogo.html')
+            print('USUARIO Y PROVEEDOR CREADO')
+            login(request, user)
+            # return render(request, 'maxproductos/mostrar_Catalogo.html')
             return redirect(reverse_lazy('/'))
     else:
+        print('ENTRE AL ELSE')
         form_user = UserForm()
         form_user_proveedor = ProveedorUserForm()
         context = {'form_user': form_user,
                    'form_user_proveedor': form_user_proveedor}
 
+    # print(form_user)
     return render(request, 'registration/registrar_usuario_proveedor.html', context)
 
 
 def registrar_usuario_cliente_v(request):
+
+    context = {}
 
     if request.method == 'POST':
         form_user = UserForm(request.POST)
@@ -95,6 +109,7 @@ def registrar_usuario_cliente_v(request):
             user_cliente.longitud = longitud
             user_cliente.telefono = telefono
             user_cliente.save()
+            login(request, user)
             return redirect(reverse_lazy('/'))
     else:
         form_user = UserForm()
@@ -103,6 +118,59 @@ def registrar_usuario_cliente_v(request):
                    'form_user_cliente': form_user_cliente}
 
     return render(request, 'registration/registrar_usuario_cliente.html', context)
+
+
+def ver_productos_proveedor(request):
+    lista_producto_proveedor = Producto.objects.filter(
+        proveedor=request.user.proveedor)
+    context = {'lista_producto_proveedor': lista_producto_proveedor}
+    return render(request, 'registration/producto_proveedor.html', context)
+
+
+class ProductoCreate(CreateView):
+    # nombre del template = (todo minuscula) nombreModelo_form
+
+    # hace una busqueda mal('registration/templates/maxproductos/producto_form.html', nada que ver) sino agrego este atributo.
+    template_name = 'registration/producto_form.html'
+    model = Producto
+    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor', 'proveedor']
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect(reverse_lazy('login'))
+        # print(request.user)
+        return super(ProductoCreate, self).dispatch(request, *args, **kwargs)
+
+    success_url = reverse_lazy('mostrar_Perfil_Proveedor')
+
+
+class ProductoUpdate(UpdateView):
+    model = Producto
+    fields = ['nombre', 'marca', 'tipo', 'descripcion', 'valor']
+    #template_name_suffix = '_update_form'
+
+    # lo mismo que ProductoUpdate
+    template_name = 'registration/producto_update_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('ver_Produto_Proveedor')
+
+class ProductoDelete(DeleteView):
+    model = Producto
+    # lo mismo que ProductoUpdate
+    template_name = 'registration/producto_confirm_delete.html'
+    success_url = reverse_lazy('ver_Produto_Proveedor')
+
+class ClienteUpdate(UpdateView):
+    model = User
+    fields = ['username', 'email', 'first_name', 'last_name']
+    #template_name_suffix = '_update_form'
+
+    # lo mismo que ProductoUpdate
+    template_name = 'registration/cliente_update_form.html'
+
+    def get_success_url(self):
+        return reverse_lazy('ver_Produto_Proveedor')
 
 
 # class RegistrarUsuario(CreateView):

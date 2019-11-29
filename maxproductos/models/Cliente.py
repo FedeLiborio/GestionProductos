@@ -12,4 +12,4 @@ class Cliente(models.Model):
     telefono = models.BigIntegerField() 
 
     def __str__(self):
-        return self.nombre  
+        return self.user.username  
