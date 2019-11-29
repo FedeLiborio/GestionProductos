@@ -21,10 +21,6 @@ from django.contrib.auth.models import User
 
 
 def mostrar_catalogo_v(request):
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
-    print("XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX")
     list_Producto = Producto.objects.all()
     list_TipoProducto = TipoProducto.objects.all()
     list_proveedor =  Proveedor.objects.all()
@@ -166,7 +162,7 @@ def verCarrito(request):
                                         #Si entra en este if, la fecha y hora esta validada
                                         pedidosParaAlmacenar.append({
                                             "proveedor": prov.id,
-                                            "cliente": 2,
+                                            "cliente": request.user.cliente.id,
                                             "hora": tiempo,
                                             "fecha": fecha
 
@@ -228,6 +224,9 @@ def verCheckout(request):
                         productosAgregados.append(producto)
                 for p in productosAgregados:
                     pedido.productos.add(p)
+                
+                request.session['carrito'] = []
+                return redirect(reverse_lazy('/'))
     return render(request, 'maxproductos/checkout.html', {'losPagos': pagos})
 
 def verPedidos(request):
@@ -276,8 +275,6 @@ def verMapa(request):
     destinoYOrigenLatitud = str(destinoYOrigenLatitud).replace(',','.')
     destinoYOrigenLongitud = str(destinoYOrigenLongitud).replace(',','.')
     
-    #url = "https://maps.googleapis.com/maps/api/directions/json?origin=-54.8118619000,-68.3293394000&destination=-54.8076320000,-68.3130340000&key=AIzaSyAgnETqEf92aH6sMfZ8TT3oXpR1ZWubs0Y"
-
     return render(request, 'maxproductos/verMapa.html',{'coordenadas': coordenadas, 'destinoYOrigenLatitud': destinoYOrigenLatitud, 'destinoYOrigenLongitud': destinoYOrigenLongitud})
 
 def verHistorialVentas(request):

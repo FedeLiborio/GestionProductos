@@ -83,7 +83,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'repartidordb',
         'USER': 'root',
-        'PASSWORD': '445566',
+        'PASSWORD': '123456',
         'HOST': '127.0.0.1',#'localhost', 
         'PORT': '3306',
     }

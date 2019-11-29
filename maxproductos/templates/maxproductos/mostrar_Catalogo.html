@@ -249,53 +249,7 @@
         </footer> -->
 </main>
 
-<p>{{carrito}}</p>
 
-
-
-<!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
-<a href="{% url 'ver_Carrito' %}"> ver carrito</a> <br>
-
-
-<a href="{% url 'admin:login' %}"> ADMINNN</a> <br>
-<a href="admin/"> ADMIN</a> <br>
-
-
-
-{% if request.user.is_authenticated %}
-    <a href="{% url 'logout' %}">Cerrar Sesion</a> <br>
-    <a href="{% url 'mostrar_Perfil_Proveedor' %}">Perfil</a> <br>
-{% else %}
-<a href="{% url 'login' %}">Iniciar Sesion</a> <br>
-<a href="{% url 'registrar_Proveedor' %}"> REGISTRAR PROVEEDOR</a> <br>
-<a href="{% url 'registrar_Cliente' %}"> REGISTRAR CLIENTE</a> <br>
-{% endif %}
-
-<div class="row">
-    <div class="col-4">
-        <!-- <a href="{% url 'admin:login' %}"> ADMINNN</a> <br>
-        <a href="admin/"> ADMIN</a> <br> -->
-    </div>
-    <div class="col-4">
-        {% comment %}
-        {% if request.user.is_authenticated %}
-            {% if request.user.id in list_id_users_proveedor %}
-                <a href="{% url 'mostrar_Perfil_Proveedor' %}">Perfil</a> <br>
-            {% else %}
-                <a href="{% url 'mostrar_Perfil_Cliente' %}">Perfil</a> <br>
-                <a href="{% url 'ver_Carrito' %}"> Ver carrito</a> <br>
-            {% endif %}
-            <!-- parece ser que el nombre de la URL debe ser el nombre definido en la variable name en el archivo url -->
-            
-            <a href="{% url 'logout' %}">Cerrar Sesion</a> <br>
-        {% else %}
-            <a href="{% url 'login' %}">Iniciar Sesion</a> <br>
-            <a href="{% url 'registrar_Proveedor' %}"> REGISTRAR PROVEEDOR</a> <br>
-            <a href="{% url 'registrar_Cliente' %}"> REGISTRAR CLIENTE</a> <br>
-        {% endif %}
-        {% endcomment %}
-    </div>
-</div>
 <p>Usuario Actual: {{request.user}} </p>
 <p>ID user: {{request.user.id}} </p> 
 

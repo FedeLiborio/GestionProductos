@@ -12,12 +12,11 @@
 <form action="" method="POST">
     {% csrf_token %}
     <table>
-            <h1>Hola</h1>
+            <h1>Registro Proveedor</h1>
         {{ form_user.as_table }}
         {{ form_user_proveedor.as_table }}
     </table>
     <input type="submit" value="Registrar">
 </form>
-{{request.POST}}
 
 {% endblock %}
